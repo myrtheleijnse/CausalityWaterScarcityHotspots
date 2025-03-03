@@ -17,12 +17,14 @@ import tigramite.plotting as tp
 os.getcwd()
 
 ### Load data ###
-df_allhotspots = pd.read_csv(r"data/Input_JP/Quantiles_LWE_ERA5_EVI_POP_discharge_Interpolated_monmean_2002-2019_allhotspots_scenario1.csv")
+
+df_allhotspots = pd.read_csv(r"data/Input_JPCMCI/REVIEW_Quantiles_LWEGAPS_ERA5_EVI_POP_discharge_InterpolatedNoise_monmean_detrend_2002-2019_allhotspots.csv")
+
 hotspotnames = df_allhotspots['hotspot'].unique().tolist()
 
 ## Select variables ##
 df_allhotspots.columns.values
-var_names = ["lwe_thickness","tp", "t2m", "EVI", "Population", "discharge"]
+var_names = ["lwe_thickness", "tp", "t2m", "EVI", "Population", "discharge"]
 
 ## Select hotspot ##
 list_hotspots = hotspotnames 
@@ -35,13 +37,17 @@ for hotspot in list_hotspots:
     data = df.values
     data_observed[N] = data
     N= N + 1
-
+   
 ### Initialize dataframe ###
 dataframe = pp.DataFrame(
     data=data_observed,
     analysis_mode = 'multiple',
-    var_names = var_names
+    var_names = var_names,
+    missing_flag = 999.,
     )
+
+# plot dataframe
+tp.plot_timeseries(dataframe)
 
 ### Node classification ###
 node_classification = {
@@ -65,7 +71,16 @@ results = jpcmciplus.run_jpcmciplus(tau_min=0,
                               tau_max=11, 
                               pc_alpha=0.001)
 
+var_names = ["TWS", "pr", "t2m", "EVI", "pop", "Q"]
+
 ### Plotting ###
+tp.plot_graph(
+    results['graph'], 
+    val_matrix=results['val_matrix'], 
+    var_names=var_names, 
+    link_colorbar_label="Link Strength", 
+    node_colorbar_label="Node Strength"
+)
 tp.plot_graph(results['graph'], val_matrix=results['val_matrix'], var_names=var_names, link_colorbar_label = "Link Strength", node_colorbar_label = "Node Strength")
 
 ### Expert Graph ###
@@ -76,44 +91,44 @@ expert_graph = np.array([[['', '-->', '', '-->', '', '', '', '', '', '', '', '']
         ['<--', '', '', '', '', '', '', '', '', '', '', ''],
         ['<--', '', '', '', '', '', '', '', '', '', '', ''],
         ['<--', '', '', '', '', '', '', '', '', '', '', ''],
-        ['<--', '', '', '', '', '', '', '', '', '', '', '']],
+        ['<--', '', '', '', '', '', '', '', '', '', '', '']], #TWS
 
        [['-->', '-->', '', '', '', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', '', '', '', '', ''],
         ['-->', '', '', '', '', '', '', '', '', '', '', ''],
         ['-->', '-->', '', '', '', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', '', '', '', '', ''],
-        ['-->', '-->', '', '', '', '', '', '', '', '', '', '']],
+        ['-->', '', '', '', '', '', '', '', '', '', '', '']], #pr
 
        [['-->', '', '', '', '', '', '', '', '', '', '', ''],
         ['<--', '', '', '', '', '', '', '', '', '', '', ''],
         ['', '-->', '-->', '', '', '', '', '', '', '', '', ''],
         ['-->', '', '', '', '', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', '']],
+        ['-->', '', '', '', '', '', '', '', '', '', '', '']], #t2m
 
        [['-->', '', '', '', '', '', '', '', '', '', '', ''],
         ['<--', '<--', '', '', '', '', '', '', '', '', '', ''],
         ['<--', '', '', '', '', '', '', '', '', '', '', ''],
         ['', '-->', '', '', '', '', '', '', '', '', '', ''],
         ['<--', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', '']],
+        ['', '', '', '', '', '', '', '', '', '', '', '']], #EVI
 
         [['-->', '', '', '', '', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', '', '', '', '', ''],
         ['-->', '', '', '', '', '', '', '', '', '', '', ''],
         ['', '-->', '-->', '-->', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', '']],
+        ['-->', '', '', '', '', '', '', '', '', '', '', '']], #pop
 
        [['-->', '', '', '', '', '', '', '', '', '', '', ''],
-        ['<--', '<--', '', '', '', '', '', '', '', '', '', ''],
+        ['<--', '', '', '', '', '', '', '', '', '', '', ''],
+        ['<--', '', '', '', '', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '-->', '', '', '', '', '', '', '', '', '', '']]],
+        ['<--', '', '', '', '', '', '', '', '', '', '', ''],
+        ['', '-->', '', '', '', '', '', '', '', '', '', '']]], #Q
       dtype='<U3')
 
-var_names = ["TWS", "tp", "t2m", "EVI", "pop", "Q"]
+var_names = ["TWS", "pr", "t2m", "EVI", "pop", "Q"]
 
 tp.plot_graph(expert_graph, var_names=var_names)
