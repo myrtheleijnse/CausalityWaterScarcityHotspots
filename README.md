@@ -10,7 +10,6 @@ Contact: m.leijnse@uu.nl
 Organization: Utrecht University
 
 ## Introduction
-Hello, thank you for reading me.
 
 This repository consist of scripts and data used for the National Geographic World Water Map project. 
 
@@ -33,14 +32,12 @@ git clone git@github.com:myrtheleijnse/CausalityWaterScarcityHotspots.git
 ├── CITATION.md
 ├── LICENSE.md
 ├── README.md
-├── scripts						<- All scripts used to generate output
-├── data               			<- All project data
-│   ├── Input      				<- Raw input data
-│   ├── Input_JPCMCI           	<- Preprocessed input data
-│   └── Output_ImpactAnalysis   <- Output data of model performance metrics and scenario results (performance)
-└── docs               			<- Documentation
-   └── manuscript     			<- Manuscript source (RO)
-   └── supplementary        <- Other project outputs (RO)
+├── scripts						     <- All scripts used to generate output
+├── data               			  <- All project data
+    ├── Input      				             <- Raw input data
+    ├── Input_JPCMCI                       <- Preprocessed input data
+    └── Output_StructuralCausalModelling   <- Output data of model performance metrics and scenario results (performance)
+
 
 ```
 
